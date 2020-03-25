@@ -1,0 +1,186 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<script src="three.js"></script>
+		<script src="OrbitControls.js"></script>
+		<script src="GLTFLoader.js"></script>
+		<script>
+            var geometry;
+
+            var raycaster = new THREE.Raycaster();
+
+            var mouse = new THREE.Vector2();
+
+            var scene = new THREE.Scene();
+            scene.background = new THREE.Color();
+
+            hlight = new THREE.AmbientLight (0x404040,5);
+            scene.add(hlight);
+
+            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 10000 );
+            camera.position.x = 500;
+            camera.position.y = 500;
+            camera.position.z = 500;
+            camera.lookAt( scene.position );
+
+            var loader = new THREE.FontLoader();
+            var renderer = new THREE.WebGLRenderer();
+            const orbit = new THREE.OrbitControls(camera);
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+            function onMouseMove( event ) {
+				event.preventDefault();
+
+
+                mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+                mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+            }
+
+            
+            
+            var loader = new THREE.FontLoader();
+            loader.load( 'Caviar Dreams_Regular.json', function ( font ) {
+
+            var textGeometry1 = new THREE.TextGeometry( 'ALIEN', {
+
+                font: font,
+
+                size: 50,
+                height: 10,
+                curveSegments: 5,
+
+                bevelThickness: 1,
+                bevelSize: 1,
+                bevelEnabled: true
+
+            });
+
+            var textGeometry2 = new THREE.TextGeometry( 'T-Rex', {
+
+                font: font,
+
+                size: 50,
+                height: 10,
+                curveSegments: 5,
+
+                bevelThickness: 1,
+                bevelSize: 1,
+                bevelEnabled: true
+
+            });
+
+            var textGeometry3 = new THREE.TextGeometry( 'Баба', {
+
+                font: font,
+
+                size: 50,
+                height: 10,
+                curveSegments: 5,
+
+                bevelThickness: 1,
+                bevelSize: 1,
+                bevelEnabled: true
+
+            });
+
+            var gloader = new THREE.GLTFLoader();
+
+            gloader.load( 'xeno_raven/scene.gltf', function ( gltf ) {
+                let model = gltf.scene.children[0];
+                model.position.z = -100;
+                model.position.x = -500;
+                scene.add( model );
+
+            }, undefined, function ( error ) {
+
+                console.error( error );
+
+            } );
+
+            gloader.load( 'tyrannosarus_rex_free_model/scene.gltf', function ( gltf ) {
+                let model = gltf.scene.children[0];
+                model.scale.set(20,20,20);
+                model.position.x = 0;
+                model.position.z = -150;
+                scene.add( model );
+
+            }, undefined, function ( error ) {
+
+                console.error( error );
+
+            } );
+
+            gloader.load( 'izzy_-_animated_female_character_free_download/scene.gltf', function ( gltf ) {
+                let model = gltf.scene.children[0];
+                model.scale.set(2,2,2);
+                model.position.x = 350;
+                model.position.z = -100;
+                scene.add( model );
+
+            }, undefined, function ( error ) {
+
+                console.error( error );
+
+            } );
+
+            var textMaterial = new THREE.MeshPhongMaterial( 
+                { color: 0xff0000, specular: 0xffffff }
+            );
+
+            var mesh1 = new THREE.Mesh( textGeometry1, textMaterial );
+            var mesh2 = new THREE.Mesh( textGeometry2, textMaterial );
+            var mesh3 = new THREE.Mesh( textGeometry3, textMaterial );
+
+            mesh1.position.x = -550;
+            mesh2.position.x = -100;
+            mesh3.position.x = 300;
+
+            scene.add( mesh1 );
+            scene.add( mesh2 );
+            scene.add( mesh3 );
+
+            });   
+
+            var lmaterial = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+            var points = [];
+            points.push( new THREE.Vector3( 0, 0, 0 ) );
+            points.push( new THREE.Vector3( 0, 1000, 0 ) );
+            points.push( new THREE.Vector3( 0, 0, 0 ) );
+            points.push( new THREE.Vector3( 0, 0, 1000 ) );
+            points.push( new THREE.Vector3( 0, 0, 0 ) );
+            points.push( new THREE.Vector3( 1000, 0, 0 ) );
+            
+            var lgeometry = new THREE.BufferGeometry().setFromPoints( points );
+            var line = new THREE.Line( lgeometry, lmaterial );
+            //Если нужны оси - раскомменти след. строку
+            //scene.add( line );
+
+			camera.position.z = 5;
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+                orbit.update();
+                raycaster.setFromCamera( mouse, camera );
+
+                var intersects = raycaster.intersectObjects( scene.children );
+
+                for ( var i = 0; i < intersects.length; i++ ) {
+
+                    intersects[ i ].object.material.color.set( 0xff0000 );
+
+                }
+                    renderer.render( scene, camera );
+                };
+                scene.addEventListener( 'mousemove', onMouseMove, false );
+			animate();
+		</script>
+	</body>
+</html>
